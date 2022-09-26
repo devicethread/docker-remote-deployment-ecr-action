@@ -1,9 +1,9 @@
-name: Docker-Compose Remote Deployment
-author: Wernich Bekker<wernich.bekker+dev@gmail.com>
-description: A GitHub Action that supports docker-compose on remote hosts
+name: Docker-Compose Remote Deployment via AWS ECR
+author: DeviceThread<development@devicethread.com>
+description: A GitHub Action that supports docker-compose on remote hosts from ECR
 inputs:
   remote_docker_host:
-    description: Remote Docker host ie (user@host)
+    description: Remote Docker host ie (user@host) - host needs to have role assigned which has permission to access ECR
     required: true
   ssh_public_key:
     description: Remote Docker SSH public key
@@ -29,10 +29,13 @@ inputs:
   docker_login_registry:
     description: The docker login registry
     required: false
+  aws_region:
+    description: The aws region of ECR repository
+    required: true
 
 runs:
   using: docker
-  image: docker://taptap21/docker-remote-deployment-action:v1.1
+  image: docker://devicethread/docker-remote-deployment-ecr-action:v.1.0.dt
 
 
 branding:

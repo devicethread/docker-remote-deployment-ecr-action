@@ -36,6 +36,11 @@ if [ -z "$INPUT_SSH_PORT" ]; then
   INPUT_SSH_PORT=22
 fi
 
+if [ -z "$INPUT_AWS_REGION" ]; then
+    echo "AWS region is required!"
+    exit 1
+fi
+
 STACK_FILE=${INPUT_STACK_FILE_NAME}
 DEPLOYMENT_COMMAND_OPTIONS="--host ssh://$INPUT_REMOTE_DOCKER_HOST:$INPUT_SSH_PORT"
 
@@ -67,9 +72,18 @@ docker context create staging --docker "host=ssh://$INPUT_REMOTE_DOCKER_HOST:$IN
 docker context use staging
 
 
-if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] || [ -n "$INPUT_DOCKER_LOGIN_REGISTRY" ]; then
+if [ -n "$INPUT_AWS_REGION" ] || [ -n "$INPUT_DOCKER_LOGIN_REGISTRY" ]; then
+  echo "Connecting to ECR $INPUT_REMOTE_DOCKER_HOST... Command: aws ecr get-login-password pipe to docker login"
+  export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+  export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+  export AWS_DEFAULT_REGION=$AWS_REGION
+  aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $INPUT_DOCKER_LOGIN_REGISTRY
+elif  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] || [ -n "$INPUT_DOCKER_LOGIN_REGISTRY" ]; then
   echo "Connecting to $INPUT_REMOTE_DOCKER_HOST... Command: docker login"
   docker login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
+else 
+   echo "Cannot perform docker login"
+   exit 1
 fi
 
 echo "Command: ${DEPLOYMENT_COMMAND} pull"
