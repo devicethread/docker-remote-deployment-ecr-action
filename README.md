@@ -19,7 +19,6 @@ Below is an example of how the action can be used
     docker_login_password: ${{ secrets.DOCKER_REPO_PASSWORD }}
     docker_login_user: ${{ secrets.DOCKER_REPO_USERNAME }}
     docker_login_registry : ${{ steps.login-ecr.outputs.registry }}
-    aws_region : ${{ secrets.AWS_REGION }}
     args: -p myapp up -d
 ```
 
@@ -67,10 +66,6 @@ The password for the container repository user.
 ### `docker_login_registry`
 
 The docker container registry to authenticate against
-
-### `aws_region`
-
-The aws region where ECR repository is located
 
 ## License
 

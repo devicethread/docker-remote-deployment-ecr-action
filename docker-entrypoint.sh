@@ -86,6 +86,8 @@ else
    exit 1
 fi
 
+ls -lart
+
 echo "Command: ${DEPLOYMENT_COMMAND} pull"
 ${DEPLOYMENT_COMMAND} ${DEPLOYMENT_COMMAND_OPTIONS} pull
 

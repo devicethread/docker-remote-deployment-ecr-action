@@ -29,9 +29,6 @@ inputs:
   docker_login_registry:
     description: The docker login registry
     required: false
-  aws_region:
-    description: The aws region of ECR repository
-    required: true
 
 runs:
   using: docker
